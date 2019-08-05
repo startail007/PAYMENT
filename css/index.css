@@ -1,0 +1,401 @@
+html{
+	position: relative;
+    display: block;
+}
+body{    
+	position: relative;
+    display: block;
+	margin:0;
+}
+.app{
+	position: relative;
+	display: block;
+}
+.appContent{
+	position: relative;
+    display: block;
+}
+
+.orderInfo{
+	position: absolute;
+    display: block;
+    background-color: #fff;
+    left: 100%;
+    top: 20px;
+    min-width: 200px;
+    border:1px solid #fed52d;
+    border-radius: 10px;
+    white-space: nowrap;
+    max-width: 300px;
+}
+.orderInfoTitle{
+	position: relative;
+	display: block;
+    background-color: #fed52d;
+    border-radius: 10px 10px 0px 0px;
+    padding: 10px;
+}
+.orderInfo .item{
+	position: relative;
+	display: block;
+	padding: 10px;
+}
+.orderInfo .item .title{
+	position: relative;
+	display: inline-block;
+}
+.orderInfo .item .value{
+	position: relative;
+	display: inline-block;
+}
+.step{
+	position: relative;
+	display: block;
+	padding: 20px;
+	box-sizing: border-box;
+}
+.step .item{
+	position: relative;
+	display: inline-block; 
+    text-align: center;
+    vertical-align: middle; 
+    height: 70px;
+}
+.step .item .title{
+	position: relative;
+    display: block;
+    width: 70px;
+    height: 70px;
+    line-height: 70px;
+    border-radius: 70px;
+    margin: 0px auto 5px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #f2f2f2;
+    background-color: rgba(60, 60, 60, 0.5);
+}
+.step .item .title:before{
+	content: "";
+	position: absolute;
+	display: block;
+	width: 100%;
+    left: 50%;
+    top: 50%;
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    margin-left: -25px;
+    margin-top: -25px;
+    background-color: #3c3c3c;
+}
+.step .item .title .text{	
+    position: relative;
+    display: inline-block;
+}
+
+.step .line{
+	position: relative;
+	display: inline-block;
+	width: 100px;
+	height: 5px;
+    background-color: #3c3c3c;
+    vertical-align: middle;
+}
+
+
+.payProcess{
+	position: relative;
+	display: block;
+	text-align: center;
+}
+.payProcessTitle{
+	position: relative;
+	display: block;
+    background-color: #fed52d;
+}
+.payProcessTitle .step{
+	width: 960px;
+    margin: 0 auto;
+	text-align: center;
+	padding-bottom: 40px;
+}
+.payProcessContent{
+	position: relative;
+	display: inline-block;
+    width: 960px;
+    margin: 0 auto;
+    padding: 0px 20px;
+    box-sizing: border-box;
+	text-align: left;
+}
+.bg{
+	position: absolute;
+	display: none;
+	width: 100%;
+	width: 1280px;
+	opacity: 0.5;
+}
+.bg img{
+	width: 100%
+}
+.block{
+	position: relative;
+	display: block;
+	width: 100%;
+    margin: 15px 0px;
+    padding-left: 80px;
+    padding-right: 80px;
+    box-sizing: border-box;
+}
+.radioBox{
+	position: relative;
+    display: inline-block;
+    text-decoration: none;
+    padding: 15px 60px;
+    border-radius: 10px;
+    color: #333;
+    box-sizing: border-box;
+    min-width: 180px;
+    text-align: center;
+    margin-left: 25px;
+    box-sizing: border-box;
+}
+.block.title{	
+    font-size: 1.6em;
+    font-weight: bold;
+    margin-top: 40px;
+    /*margin-left: -10px;*/
+    padding-left: 75px;
+    margin-bottom: 30px;
+}
+.block.title:after{
+	content: "";
+	position: relative;
+	display: inline-block;
+	width: 30px;
+	height: 4px;
+	border-radius: 4px;
+    background-color: #fed52d;
+    vertical-align: middle;
+    margin-left: 20px;
+}
+.block.subTitle{	
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-top: 15px;
+    padding-left: 60px;
+    /*margin-left: -15px;*/
+}
+.block.subTitle:before{
+	content: "";
+	position: relative;
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 8px;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+.block.subTitle.required:before{	
+    background-color: #fed52d;
+}
+.block.subTitle .text{
+	position: relative;
+	display: inline-block;
+}
+
+.radioBox:first-child{
+    margin-left: 0px;
+}
+.radioBox:after{
+	content: "";
+	position: absolute;
+	display: block;
+	left: 0%;
+	top: 0%;
+	width: 100%;
+	height: 100%;	
+    border: 1px solid #aaa;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+.radioBox.router-link-active:after{	
+    border: 5px solid #fed52d;
+}
+.inputText{
+	position: relative;
+    display: inline-block;
+    width: 4em;
+    font-size: 20px;
+    padding: 5px;
+    text-align: center;
+    letter-spacing: 0.1em;
+    line-height: 28px;
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid #777;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+.inputText[name="name"]{
+    width: 40em;
+    text-align: left;
+}
+.inputText[name="email"]{
+    width: 40em;
+    text-align: left;
+}
+.inputText[name="promotionCode"]{
+    width: 10em;
+}
+.inputText:focus{
+    border: 1px solid #fed52d;
+}
+
+.radio {
+    position: relative;
+    display: block;
+    color: #111;
+    padding: 10px 2px;
+    box-sizing: border-box;
+    font-size: 16px;
+    cursor: pointer;
+}
+.radio .icon {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    /* background-color: #fff; */
+    border: 2px solid #777;
+    border-radius: 20px;
+    margin: 0;
+    box-sizing: border-box;
+    outline: 0;
+    vertical-align: middle;
+    transition: border .3s;
+}
+.radio .icon:checked {
+    border: 2.5px solid #fed52d;
+}
+.radio .icon:after {
+    content: "";
+    position: absolute;
+    display: block;
+    width: 0px;
+    height: 0px;
+    background-color: #777;
+    border-radius: 10px;
+    left: 50%;
+    top: 50%;
+    margin-left: 0px;
+    margin-top: 0px;
+    transition: width .3s,height .3s,margin-left .3s,margin-top .3s,background-color .3s;
+}
+.radio .icon:checked:after {
+    width: 10px;
+    height: 10px;
+    background-color: #fed52d;
+    margin-left: -5px;
+    margin-top: -5px;
+}
+.radio .text {
+    vertical-align: middle;
+    margin-left: 2px;
+    position: relative;
+    display: inline-block;
+}
+.radio .subText {
+    vertical-align: middle;
+    margin-left: 2px;
+    position: relative;
+    display: inline-block;
+    color: #555;
+}
+
+.symbol{
+	position: relative;
+	display: inline-block;
+	margin: 0px 5px;
+}
+
+.checkBox {
+    position: relative;
+    display: block;
+    /*color: #fff;*/
+    padding: 10px 2px;
+    box-sizing: border-box;
+    font-size: 16px;
+    cursor: pointer;
+    color: #111;
+}
+.checkBox .icon {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    /* background-color: #fff; */
+    border: 2px solid #777;
+    margin: 0;
+    box-sizing: border-box;
+    outline: 0;
+    vertical-align: middle;
+    transition: border .3s;
+}
+.checkBox .icon:checked {
+    border: 2.5px solid #fed52d;
+}
+.checkBox .icon:after {
+    content: "";
+    position: absolute;
+    display: block;
+    width: 0px;
+    height: 0px;
+    background-color: #777;
+    left: 50%;
+    top: 50%;
+    margin-left: 0px;
+    margin-top: 0px;
+    transition: width .3s,height .3s,margin-left .3s,margin-top .3s,background-color .3s;
+}
+.checkBox .icon:checked:after {
+    width: 10px;
+    height: 10px;
+    background-color: #fed52d;
+    margin-left: -5px;
+    margin-top: -5px;
+}
+.checkBox .text {
+    vertical-align: middle;
+    margin-left: 2px;
+    position: relative;
+    display: inline-block;
+}
+.checkBox .subText {
+    vertical-align: middle;
+    margin-left: 2px;
+    position: relative;
+    display: inline-block;
+    color: #555;
+}
+
+.errorText{
+	position: relative;
+	display: inline-block;
+	margin-left: 20px;
+	color: #f00;
+	font-size: 14px;
+}
+.region{
+	position: relative;
+	display: block;
+    padding: 1px;
+    margin: 5px 0px;
+}
+.region.error{
+	background-color: #eee;
+}

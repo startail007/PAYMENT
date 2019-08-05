@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<script src="js/vue.js"></script>
+	<script src="js/vee-validate.js"></script>
+	<script src="js/vuex.js"></script>
+	<script src="js/vue-router.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/index.css">	
+	<script src="js/index.js"></script>
+	<style>
+		[v-cloak] {
+			display: none;
+		}	
+	</style>
+	<template id="template_root">
+		<div>
+			<router-link to="payProcess/step1">GO</router-link>
+		</div>
+	</template>
+	<template id="template_payProcess">
+		<div class="payProcess">
+			<div class="payProcessTitle">
+				<div class="step">
+					<div class="item">
+						<div class="title">
+							<div class="text">STEP.1</div>							
+						</div>
+						<div class="subTitle">選擇支付方式</div>
+					</div>
+					<div class="line"></div>
+					<div class="item">
+						<div class="title">
+							<div class="text">STEP.2</div>							
+						</div>
+						<div class="subTitle">確認訂購資訊</div>
+					</div>
+					<div class="line"></div>
+					<div class="item">
+						<div class="title">
+							<div class="text">STEP.3</div>
+						</div>
+						<div class="subTitle">支付成功</div>
+					</div>
+				</div>
+			</div>					
+			<div class="payProcessContent">			
+				<router-view></router-view>
+				<div class="orderInfo">
+					<div class="orderInfoTitle">訂單資訊</div>
+					<div class="item">
+						<div class="title">商品名稱：</div>
+						<div class="value">
+							<div v-for="(item) in orderInfo.list">{{item.name}} x{{item.count}}</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="title">訂單編號：</div>
+						<div class="value">{{orderInfo.order}}</div>
+					</div>
+					<div class="item">
+						<div class="title">訂單金額：</div>
+						<div class="value">NT$ {{totalAmount}}</div>
+					</div>
+				</div>
+			</div>			
+		</div>
+	</template>
+
+	<template id="template_step1">
+		<div>
+			<div class="block title">選擇支付方式</div>
+			<div class="block">
+				<router-link v-for="(item) in payTypeList" :to="{name:item.value}" :key="item.value" class="radioBox">
+					{{item.title}}
+				</router-link>
+			</div>			
+			<router-view ref="payTypeContent"></router-view>
+			<div class="block title">購買者資訊</div>
+			<div class="block">
+				<label class="radio">
+					<input type="radio" name="identity" class="icon" v-model="identity" value="anonymous">
+					<div class="text">我想以遊客身份購物</div>
+				</label>
+				<label class="radio">
+					<input type="radio" name="identity" class="icon" v-model="identity" value="member">
+					<div class="text">我想加入會員</div>
+					<div class="subText">加入會員後您即可享有首次消費$50折抵，我們也將不定期釋出其他優惠給會員</div>
+				</label>
+			</div>
+			<div v-if="identity==='member'">
+				<div class="region" :class="{error:errors.has('name')}">
+					<div class="block subTitle required">
+						<div class="text">請輸入姓名或暱稱</div>
+						<div class="errorText" v-if="errors.has('name')">{{ errors.first('name') }}</div>
+					</div>
+					<div class="block">
+						<input type="text" class="inputText" v-validate="'required|min:2'" name="name" maxlength="40" v-model="name">
+					</div>
+				</div>
+				<div class="region" :class="{error:errors.has('email')}">
+					<div class="block subTitle required">
+						<div class="text">請輸入電子郵件，我們將透過郵件提供您最新的優惠訊息</div>
+						<div class="errorText" v-if="errors.has('email')">{{ errors.first('email') }}</div>
+					</div>
+					<div class="block">
+						<input type="text" class="inputText" v-validate="'required|email'" name="email" v-model="email">
+					</div>
+				</div>
+			</div>
+			<div class="region" :class="{error:errors.has('promotionCode')}">
+				<div class="block subTitle">
+					<div class="text">請輸入優惠代碼</div>
+					<div class="errorText" v-if="errors.has('promotionCode')">{{ errors.first('promotionCode') }}</div>
+				</div>
+				<div class="block">
+					<input type="text" class="inputText" v-validate="'alpha_num|min:8'" maxlength="8" name="promotionCode" v-model="promotionCode">
+				</div>
+			</div>
+			<div class="region" :class="{error:errors.has('agree')}">
+				<div class="block">
+					<label class="checkBox">
+						<input type="checkbox" name="agree" class="icon" v-validate="'required'" v-model="agree" value="ok">
+						<div class="text">我同意接受酷社坊服務條款和隱私權政策</div>
+						<div class="errorText" v-if="errors.has('agree')">{{ errors.first('agree') }}</div>
+					</label>
+				</div>
+			</div>
+			<div class="block">
+				<div @click="next">下一步</div>
+			</div>
+		</div>
+	</template>
+	
+	<template id="template_step1_creditCard">
+		<div>
+			<div class="region" :class="{error:errors.has('creditCard')}">
+				<div class="block subTitle required">
+					<div class="text">請輸入信用卡卡號</div>
+					<div class="errorText" v-if="errors.has('creditCard')">{{ errors.first('creditCard') }}</div>
+				</div>
+				<div class="block">
+					<input type="text" class="inputText" maxlength="4" v-model="creditCard0">
+					<div class="symbol">-</div>
+					<input type="text" class="inputText" maxlength="4" v-model="creditCard1">
+					<div class="symbol">-</div>
+					<input type="text" class="inputText" maxlength="4" v-model="creditCard2">
+					<div class="symbol">-</div>
+					<input type="text" class="inputText" maxlength="4" v-model="creditCard3">
+
+					<input type="text" class="inputText" v-validate="'required|numeric|credit_card'" name="creditCard" v-model="creditCard" v-show="false">				
+				</div>
+			</div>
+			<div class="region" :class="{error:errors.has('creditCardTerm')}">
+				<div class="block subTitle required">
+					<div class="text">請輸入信用卡期限</div>
+					<div class="errorText" v-if="errors.has('creditCardTerm')">{{ errors.first('creditCardTerm') }}</div>
+				</div>
+				<div class="block">
+					<input type="text" class="inputText" maxlength="2" v-model="creditCardTerm0">
+					<div class="symbol">/</div>
+					<input type="text" class="inputText" maxlength="2" v-model="creditCardTerm1">
+
+					<input type="text" class="inputText" v-validate="'required|numeric|date_format:MMyy'" name="creditCardTerm" v-model="creditCardTerm" v-show="false">
+				</div>
+			</div>
+			<div class="region" :class="{error:errors.has('creditCardSecurityCode')}">
+				<div class="block subTitle required">
+					<div class="text">請輸入信用卡背後安全碼</div>
+					<div class="errorText" v-if="errors.has('creditCardSecurityCode')">{{ errors.first('creditCardSecurityCode') }}</div>
+				</div>
+				<div class="block">
+					<input type="text" class="inputText" maxlength="4" v-validate="'required|numeric|digits:4'" name="creditCardSecurityCode">
+				</div>
+			</div>
+		</div>		
+	</template>
+	<template id="template_step1_shop">
+		<div>
+			<div class="block">
+				建構中...
+			</div>
+		</div>
+	</template>
+	<template id="template_step2">
+		<div>
+			<div>STEP2. 填寫付款資訊</div>
+			{{payType}}
+			<router-view></router-view>
+		</div>
+	</template>	
+	<template id="template_step3">
+		<div>
+			<router-view></router-view>
+		</div>
+	</template>
+	<template id="template_step3_finish">
+		<div>
+			<div>您的訂單已完成付款！</div>
+		</div>
+	</template>
+	<template id="template_step3_shop">
+		<div>
+			<div>您的訂單已成立！</div>
+		</div>
+	</template>	
+</head>
+<body>
+	<div class="app noSelect" id="app" v-cloak>
+		<div class="bg">
+			<img src="img/f11f99cc-6b15-418a-8cb3-ef202155cbaf.png">
+		</div>
+		<div class="appContent">							
+			<router-view></router-view>
+        </div>
+	</div>
+</body>
+</html>
