@@ -1,10 +1,6 @@
 window.onload = function() {
-
-	var root = {
-		template: '#template_root'
-	};
-	var payProcess = {
-		template: '#template_payProcess',
+	var orderInfo = {
+		template: '#template_orderInfo',
 		computed: {
 		  	orderInfo:function(){
 		  		return this.$store.state.orderInfo;
@@ -18,34 +14,54 @@ window.onload = function() {
         	}
 		}
 	};
-	var step1 = {
-		data:function(){
-			return {
-				payTypeList:[
-	        		{title:"信用卡付款",value:"creditCard"},
-	        		{title:"超商付款",value:"shop"}
-	        	],
-	        	identity:"anonymous",
-	        	name:"",
-	        	email:"",
-	        	promotionCode:"",
-	        	agree:""
-			}
+	var stepNav = {		
+		template: '#template_stepNav',
+		props: {
+			step: {type: Number,default: -1}
 		},
-		template: '#template_step1',
-		methods: {
-			next:function(){
-				var payTypeContent = this.$refs.payTypeContent;
-				var that = this;
-				payTypeContent.$validator.validateAll().then(function(result0) {
-		        	that.$validator.validateAll().then(function(result1) {
-			        	console.log(result0,result1)
-			       	});
-		       	});									
+		data:function(){
+			return {				
+				stepList:[
+					{title:"STEP.1",subTitle:"選擇支付方式"},
+					{title:"STEP.2",subTitle:"確認訂購資訊"},
+					{title:"STEP.3",subTitle:"支付成功"}
+				]
 			}
 		}
-	};
-	var step1_creditCard = {
+	}
+	var root = {
+		template: '#template_root',
+		components: {
+			orderInfo:orderInfo
+		}
+	};	
+	var payProcess = {
+		template: '#template_payProcess',
+		data:function(){
+			return {				
+				step:-1
+			}
+		},
+		components: {
+			orderInfo:orderInfo,
+			stepNav:stepNav
+		},
+		watch:{
+			"$route":function(){
+				this.updateStep();
+			}
+		},
+		mounted: function() {
+			this.updateStep();
+        },
+        methods: {
+        	updateStep:function(){
+        		this.step = this.$route.meta.step;
+        	}
+        }
+	};	
+	var step1_creditCard = {		
+		template: '#template_step1_creditCard',
 		data:function(){
 			return {
 				creditCard0:"",
@@ -53,10 +69,10 @@ window.onload = function() {
 				creditCard2:"",
 				creditCard3:"",
 				creditCardTerm0:"",
-				creditCardTerm1:""
+				creditCardTerm1:"",
+				creditCardSecurityCode:""
 			}
 		},
-		template: '#template_step1_creditCard',
 	    computed:{
 	    	creditCard:function(){
 	    		return this.creditCard0 + this.creditCard1 + this.creditCard2 + this.creditCard3;
@@ -67,7 +83,86 @@ window.onload = function() {
 		}
 	};
 	var step1_shop = { template: '#template_step1_shop' };
-	var step2 = { template: '#template_step2'};	
+	var step1 = {		
+		template: '#template_step1',
+		components: {
+			creditCard:step1_creditCard,
+			shop:step1_shop
+		},
+		data:function(){
+			return {
+				payTypeList:[
+	        		{title:"信用卡付款",value:"creditCard"},
+	        		{title:"超商付款",value:"shop"}
+	        	],
+	        	identity:"anonymous",
+	        	name:"",
+	        	email:"",
+	        	promotionCode:"",
+	        	agree:false
+			}
+		},
+		methods: {
+			prev:function(){
+				this.$router.push('/');
+			},
+			next:function(){
+				var payTypeContent = this.$refs.payTypeContent;
+				//console.log(payTypeContent)
+				var that = this;
+				payTypeContent.$validator.validateAll().then(function(result0) {
+		        	that.$validator.validateAll().then(function(result1) {
+			        	console.log(result0,result1)
+			       	});
+		       	});	
+		       	var userInfo = {
+		       		identity:this.identity,
+		       		name:this.name,
+		       		email:this.email,
+		       		promotionCode:this.promotionCode
+		       	};
+		       	this.$store.commit('setUserInfo', userInfo);		       	
+		       	if(this.$route.params.type==="creditCard"){
+		       		var payInfo = {
+		       			creditCard:payTypeContent.creditCard,
+		       			creditCardTerm:payTypeContent.creditCardTerm,
+		       			creditCardSecurityCode:payTypeContent.creditCardSecurityCode
+		       		}	
+		       		this.$store.commit('setPayInfo', payInfo);	       		
+		       	}
+		       	this.$router.push('/payProcess/step2/' + this.$route.params.type);						
+			}
+		}
+	};	
+	var step2_creditCard = {
+		template: '#template_step2_creditCard',
+		computed: {
+		  	payInfo:function(){
+		  		return this.$store.state.payInfo;
+	    	}
+	    }
+	};
+	var step2_shop = { template: '#template_step2_shop' };
+	var step2 = {
+		template: '#template_step2',
+		components: {
+			creditCard:step2_creditCard,
+			shop:step2_shop
+		},
+		methods: {
+			prev:function(){
+		       	this.$router.push('/payProcess/step1/' + this.$route.params.type);	
+			},
+			next:function(){	
+		       	this.$router.push('/payProcess/step3');						
+			}
+		},
+		computed: {
+		  	userInfo:function(){
+		  		return this.$store.state.userInfo;
+	    	}
+	    }
+	};	
 	var step3 = { template: '#template_step3' };
 	var step3_finish = { template: '#template_step3_finish' };
 	var step3_shop = { template: '#template_step3_shop' };
@@ -82,42 +177,34 @@ window.onload = function() {
 		},
 		{
 			path: '/payProcess',
+			redirect: '/payProcess/step1',
 			component: payProcess,
 			meta: {
 				title:''
 			},
 			children:[
 				{
-					path: 'step1',
+					path: 'step1/:type?',
 					component: step1,
 					meta: {
-						title:'步驟1'
-					},
-					children:[
-						{
-							path: 'creditCard',
-							name : 'creditCard',
-							component: step1_creditCard 
-						},
-						{
-							path: 'shop',
-							name : 'shop',
-							component: step1_shop 
-						},
-					]
+						title:'步驟1',
+						step:0
+					}
 				},
 				{ 
-					path: 'step2',
+					path: 'step2/:type?',
 					component: step2,
 					meta: {
 						title:'步驟2',
+						step:1
 					}
 				},
 				{ 
 					path: 'step3',
 					component: step3,
 					meta: {
-						title:'步驟3'
+						title:'步驟3',
+						step:2
 					},
 					children:[
 						{
@@ -138,25 +225,15 @@ window.onload = function() {
 		routes:routes
 	});
 
-	router.beforeEach(function(to, from, next){
+	/*router.beforeEach(function(to, from, next){
 		//console.log(to, from, next);
-		console.log(to, from);
+		console.log(this,to, from);
 		if (to.meta.requireAuth) {
-	        /*if (token) {
-	            next();
-	        } else {*/
-	            /*next({
-	                path: '/step1',
-	                query: {
-	                    redirect: to.fullPath
-	                }
-	            });*/
-	        //}
 	        next(false);
 	    } else {
 	        next();
 	    }
-	});
+	});*/
 	Vue.use(Vuex);
 	/*VeeValidate.Validator.extend('agree', {
 	  	validate: function(value){
@@ -226,9 +303,19 @@ window.onload = function() {
 					}
 				],
 				order:17485739
+			},
+			userInfo:{
+			},
+			payInfo:{
 			}		    
 		},
 		mutations: {
+			setUserInfo:function(state,data){
+				state.userInfo = data;
+			},
+			setPayInfo:function(state,data){
+				state.payInfo = data;
+			}
 		}
 	})
 

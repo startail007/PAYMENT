@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<link href="https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap" rel="stylesheet">
 	<script src="js/vue.js"></script>
 	<script src="js/vee-validate.js"></script>
 	<script src="js/vuex.js"></script>
@@ -17,54 +18,50 @@
 	</style>
 	<template id="template_root">
 		<div>
-			<router-link to="payProcess/step1">GO</router-link>
+			<order-info></order-info>
+			<router-link to="payProcess/step1">付款</router-link>
+		</div>
+	</template>
+	<template id="template_orderInfo">
+		<div class="orderInfo">
+			<div class="orderInfoTitle">訂單資訊</div>
+			<div class="item">
+				<div class="title">商品名稱：</div>
+				<div class="value">
+					<div v-for="(item) in orderInfo.list">{{item.name}} x{{item.count}}</div>
+				</div>
+			</div>
+			<div class="item">
+				<div class="title">訂單編號：</div>
+				<div class="value">{{orderInfo.order}}</div>
+			</div>
+			<div class="item">
+				<div class="title">訂單金額：</div>
+				<div class="value">NT$ {{totalAmount}}</div>
+			</div>
+		</div>
+	</template>
+	<template id="template_stepNav">
+		<div class="step">
+			<template v-for="(item, index) in stepList">
+				<div class="item" :class="{active:step>=index}">
+					<div class="title">
+						<div class="text">{{item.title}}</div>							
+					</div>
+					<div class="subTitle">{{item.subTitle}}</div>
+				</div>
+				<div class="line" :class="{active:step>index}" v-if="index<stepList.length-1"></div>
+			</template>
 		</div>
 	</template>
 	<template id="template_payProcess">
 		<div class="payProcess">
-			<div class="payProcessTitle">
-				<div class="step">
-					<div class="item">
-						<div class="title">
-							<div class="text">STEP.1</div>							
-						</div>
-						<div class="subTitle">選擇支付方式</div>
-					</div>
-					<div class="line"></div>
-					<div class="item">
-						<div class="title">
-							<div class="text">STEP.2</div>							
-						</div>
-						<div class="subTitle">確認訂購資訊</div>
-					</div>
-					<div class="line"></div>
-					<div class="item">
-						<div class="title">
-							<div class="text">STEP.3</div>
-						</div>
-						<div class="subTitle">支付成功</div>
-					</div>
-				</div>
+			<div class="payProcessTitle">			
+				<step-nav :step="step"></step-nav>
 			</div>					
 			<div class="payProcessContent">			
-				<router-view></router-view>
-				<div class="orderInfo">
-					<div class="orderInfoTitle">訂單資訊</div>
-					<div class="item">
-						<div class="title">商品名稱：</div>
-						<div class="value">
-							<div v-for="(item) in orderInfo.list">{{item.name}} x{{item.count}}</div>
-						</div>
-					</div>
-					<div class="item">
-						<div class="title">訂單編號：</div>
-						<div class="value">{{orderInfo.order}}</div>
-					</div>
-					<div class="item">
-						<div class="title">訂單金額：</div>
-						<div class="value">NT$ {{totalAmount}}</div>
-					</div>
-				</div>
+				<router-view></router-view>	
+				<order-info></order-info>
 			</div>			
 		</div>
 	</template>
@@ -73,11 +70,17 @@
 		<div>
 			<div class="block title">選擇支付方式</div>
 			<div class="block">
-				<router-link v-for="(item) in payTypeList" :to="{name:item.value}" :key="item.value" class="radioBox">
+				<router-link v-for="(item) in payTypeList" :to="{path:'/payProcess/step1/'+item.value}" :key="item.value" class="radioBox">
 					{{item.title}}
 				</router-link>
-			</div>			
-			<router-view ref="payTypeContent"></router-view>
+			</div>
+			<template v-if="$route.params.type==='creditCard'">
+				<credit-card ref="payTypeContent"></credit-card>
+			</template>
+			<template v-else-if="$route.params.type==='shop'">
+				<shop ref="payTypeContent"></shop>
+			</template>				
+			<!--<router-view ref="payTypeContent"></router-view>-->
 			<div class="block title">購買者資訊</div>
 			<div class="block">
 				<label class="radio">
@@ -128,8 +131,11 @@
 					</label>
 				</div>
 			</div>
-			<div class="block">
-				<div @click="next">下一步</div>
+			<div class="payProcessFoot">
+				<div class="foot">
+					<div @click="prev" class="button">回到購物車</div>
+					<div @click="next" class="button">下一步</div>
+				</div>
 			</div>
 		</div>
 	</template>
@@ -172,7 +178,7 @@
 					<div class="errorText" v-if="errors.has('creditCardSecurityCode')">{{ errors.first('creditCardSecurityCode') }}</div>
 				</div>
 				<div class="block">
-					<input type="text" class="inputText" maxlength="4" v-validate="'required|numeric|digits:4'" name="creditCardSecurityCode">
+					<input type="text" class="inputText" maxlength="3" v-validate="'required|numeric|digits:3'" name="creditCardSecurityCode" v-model="creditCardSecurityCode">
 				</div>
 			</div>
 		</div>		
@@ -186,11 +192,102 @@
 	</template>
 	<template id="template_step2">
 		<div>
-			<div>STEP2. 填寫付款資訊</div>
-			{{payType}}
-			<router-view></router-view>
+			<div>
+				<div class="block title">確認付款資訊</div>
+				<template v-if="$route.params.type==='creditCard'">
+					<credit-card ref="payTypeContent"></credit-card>
+				</template>
+				<template v-else-if="$route.params.type==='shop'">
+					<shop ref="payTypeContent"></shop>
+				</template>
+				<template v-if="userInfo.identity==='anonymous'">
+					<div class="region">
+						<div class="block subTitle">
+							<div class="text">購買者資訊：</div>
+						</div>
+						<div class="block">
+							<div class="text">遊客身份</div>
+						</div>
+					</div>
+				</template>
+				<template v-else>
+					<div class="region">
+						<div class="block subTitle">
+							<div class="text">購買者姓名：</div>
+						</div>
+						<div class="block">
+							<div class="text">{{userInfo.name}}</div>
+						</div>
+					</div>
+					<div class="region">
+						<div class="block subTitle">
+							<div class="text">購買者電子郵件：</div>
+						</div>
+						<div class="block">
+							<div class="text">{{userInfo.email}}</div>
+						</div>
+					</div>
+				</template>
+				<div class="region">
+					<div class="block subTitle">
+						<div class="text">優惠代碼：</div>
+					</div>
+					<div class="block">
+						<div class="text">{{userInfo.promotionCode}}</div>
+					</div>
+				</div>
+			</div>
+			<div class="payProcessFoot">
+				<div class="foot">
+					<div @click="prev" class="button">回到支付方式</div>
+					<div @click="next" class="button">確認付款</div>
+				</div>
+			</div>
 		</div>
 	</template>	
+	<template id="template_step2_creditCard">
+		<div>
+			<div class="region">
+				<div class="block subTitle">
+					<div class="text">支付方式：</div>
+				</div>
+				<div class="block">
+					<div class="text">信用卡付款</div>
+				</div>
+			</div>
+			<div class="region">
+				<div class="block subTitle">
+					<div class="text">信用卡卡號：</div>
+				</div>
+				<div class="block">
+					<div class="text">{{payInfo.creditCard}}</div>
+				</div>
+			</div>
+			<div class="region">
+				<div class="block subTitle">
+					<div class="text">信用卡期限：</div>
+				</div>
+				<div class="block">
+					<div class="text">{{payInfo.creditCardTerm}}</div>
+				</div>
+			</div>
+			<div class="region">
+				<div class="block subTitle">
+					<div class="text">信用卡背後安全碼：</div>
+				</div>
+				<div class="block">
+					<div class="text">{{payInfo.creditCardSecurityCode}}</div>
+				</div>
+			</div>			
+		</div>
+	</template>
+	<template id="template_step2_shop">
+		<div>
+			<div class="block">
+				shop 建構中...
+			</div>
+		</div>
+	</template>
 	<template id="template_step3">
 		<div>
 			<router-view></router-view>
@@ -209,9 +306,9 @@
 </head>
 <body>
 	<div class="app noSelect" id="app" v-cloak>
-		<div class="bg">
+		<!--<div class="bg">
 			<img src="img/f11f99cc-6b15-418a-8cb3-ef202155cbaf.png">
-		</div>
+		</div>-->
 		<div class="appContent">							
 			<router-view></router-view>
         </div>
