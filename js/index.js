@@ -110,32 +110,55 @@ window.onload = function() {
 				var payTypeContent = this.$refs.payTypeContent;
 				//console.log(payTypeContent)
 				var that = this;
-				payTypeContent.$validator.validateAll().then(function(result0) {
-		        	that.$validator.validateAll().then(function(result1) {
-			        	console.log(result0,result1)
+				payTypeContent.$validator.validateAll("main").then(function(result0) {
+		        	that.$validator.validateAll("main").then(function(result1) {
+		        		that.$validator.validate("promotionCode").then(function(result2) {
+
+				        	//console.log(result0,result1,result2);
+				        	if(result0&&result1){
+					        	var userInfo = {
+						       		identity:that.identity,
+						       		name:that.name,
+						       		email:that.email,
+						       		promotionCode:(that.promotionCode!==""&&result2)?that.promotionCode:""
+						       	};
+						       	that.$store.commit('setUserInfo', userInfo);		       	
+						       	if(that.$route.params.type==="creditCard"){
+						       		var payInfo = {
+						       			creditCard:payTypeContent.creditCard,
+						       			creditCardTerm:payTypeContent.creditCardTerm,
+						       			creditCardSecurityCode:payTypeContent.creditCardSecurityCode
+						       		}	
+						       		that.$store.commit('setPayInfo', payInfo);	       		
+						       	}
+						       	that.$router.push('/payProcess/step2/' + that.$route.params.type);
+				        	}
+
+				       	});			        	
 			       	});
 		       	});	
-		       	var userInfo = {
-		       		identity:this.identity,
-		       		name:this.name,
-		       		email:this.email,
-		       		promotionCode:this.promotionCode
-		       	};
-		       	this.$store.commit('setUserInfo', userInfo);		       	
-		       	if(this.$route.params.type==="creditCard"){
-		       		var payInfo = {
-		       			creditCard:payTypeContent.creditCard,
-		       			creditCardTerm:payTypeContent.creditCardTerm,
-		       			creditCardSecurityCode:payTypeContent.creditCardSecurityCode
-		       		}	
-		       		this.$store.commit('setPayInfo', payInfo);	       		
-		       	}
-		       	this.$router.push('/payProcess/step2/' + this.$route.params.type);						
+		       	
+		       	
+		       								
 			}
 		}
 	};	
 	var step2_creditCard = {
 		template: '#template_step2_creditCard',
+		methods: {
+	    	creditCardWithCommas:function(x) {
+	    		if(!x){
+	    			return "";
+	    		}
+			    return x.toString().replace(/\B(?=(\d{4})+(?!\d))/g, "-");
+			},
+			creditCardTermWithCommas:function(x) {
+				if(!x){
+	    			return "";
+	    		}
+			    return x.toString().replace(/\B(?=(\d{2})+(?!\d))/g, "/");
+			}
+		},
 		computed: {
 		  	payInfo:function(){
 		  		return this.$store.state.payInfo;
@@ -154,7 +177,11 @@ window.onload = function() {
 		       	this.$router.push('/payProcess/step1/' + this.$route.params.type);	
 			},
 			next:function(){	
-		       	this.$router.push('/payProcess/step3');						
+				var step3map = {
+					creditCard:'finish',
+					shop:'shop'
+				}
+		       	this.$router.push('/payProcess/step3/'+step3map[this.$route.params.type]);						
 			}
 		},
 		computed: {
@@ -163,9 +190,15 @@ window.onload = function() {
 	    	}
 	    }
 	};	
-	var step3 = { template: '#template_step3' };
 	var step3_finish = { template: '#template_step3_finish' };
 	var step3_shop = { template: '#template_step3_shop' };
+	var step3 = {
+		template: '#template_step3',
+		components: {
+			finish:step3_finish,
+			shop:step3_shop
+		}
+	};
 
 	var routes = [
 		{
@@ -200,12 +233,12 @@ window.onload = function() {
 					}
 				},
 				{ 
-					path: 'step3',
+					path: 'step3/:type?',
 					component: step3,
 					meta: {
 						title:'步驟3',
 						step:2
-					},
+					}/*,
 					children:[
 						{
 							path: 'finish',
@@ -215,7 +248,7 @@ window.onload = function() {
 							path: 'shop',
 							component: step3_shop 
 						}
-					]
+					]*/
 				}
 			]
 		},		
@@ -233,13 +266,11 @@ window.onload = function() {
 	    } else {
 	        next();
 	    }
-	});*/
+	});*/	
 	Vue.use(Vuex);
-	/*VeeValidate.Validator.extend('agree', {
-	  	validate: function(value){
-	  		return false;
-	  	}
-	});*/
+	//console.log(axios.get)
+
+
 	Vue.use(VeeValidate, {
 		locale: 'zh_TW',
 		dictionary: {
@@ -292,6 +323,25 @@ window.onload = function() {
 		}
 	});
 
+	VeeValidate.Validator.extend('promotionCode', {
+		getMessage: function(field, params, data){
+			return "優惠碼無效";
+		},
+	  	validate: function(value){
+	  		/*做異步驗證*/
+		    var promise = new Promise(function(resolve, reject) {
+				setTimeout(function(){
+					if(value==="12345678"){
+						resolve(true);
+					}else{
+						resolve(false);
+					}
+				}, 1000);
+			});
+		    return promise;
+	  	}
+	});
+
 	var store = new Vuex.Store({
 		state: {
 			orderInfo:{
@@ -317,7 +367,9 @@ window.onload = function() {
 				state.payInfo = data;
 			}
 		}
-	})
+	});
+
+	
 
 
 
