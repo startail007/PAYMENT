@@ -20,13 +20,36 @@ body{
 .orderInfo{
 	position: relative;
     display: block;
-    background-color: #fff;
+    pointer-events: none;
+}
+.orderInfoButton{
+    position: absolute;
+    display: none;
+    width: 30px;
+    height: 30px;
+    background-color: #fed52d;
+    border: 1px solid #888;
+    right: 5px;
+    top: 5px;
+    border-radius: 30px;
+    pointer-events: auto;
+    background-image: url(../img/shopping-cart.png);
+    background-position: center;
+    background-size: 50%;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+.orderInfoContent{
+    position: relative;
+    display: block;
     min-width: 200px;
     border:1px solid #fed52d;
     border-radius: 10px;
     white-space: nowrap;
     max-width: 300px;
     margin: 10px auto;
+    background-color: #fff;
+    pointer-events: auto;
 }
 .payProcessContent .orderInfo{
     position: absolute;
@@ -76,7 +99,7 @@ body{
     line-height: 70px;
     border-radius: 70px;
     margin: 0px auto 5px;
-    font-size: 12px;
+    font-size: 0.6em;
     font-weight: bold;
     color: #999;
     background-color: rgba(254, 237, 171, 0.5);
@@ -145,16 +168,21 @@ body{
     background-color: #fed52d;
 }
 .payProcessTitle .step{
-	width: 960px;
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: 960px;
     margin: 0 auto;
 	text-align: center;
 	padding-bottom: 40px;
     font-size: 0px;
+    overflow: hidden;
 }
 .payProcessContent{
 	position: relative;
-	display: inline-block;
-    width: 960px;
+	display: block;
+    width: 100%;
+    max-width: 960px;
     margin: 0 auto;
     padding: 0px 20px;
     box-sizing: border-box;
@@ -307,7 +335,7 @@ body{
     color: #111;
     padding: 10px 2px;
     box-sizing: border-box;
-    font-size: 16px;
+    font-size: 1em;
     cursor: pointer;
 }
 .radio .icon {
@@ -380,7 +408,7 @@ body{
     /*color: #fff;*/
     padding: 10px 2px;
     box-sizing: border-box;
-    font-size: 16px;
+    font-size: 1em;
     cursor: pointer;
     color: #111;
 }
@@ -441,7 +469,7 @@ body{
 	display: inline-block;
 	margin-left: 20px;
 	color: #f00;
-	font-size: 14px;
+	font-size: 0.8em;
     font-weight: bold;
 }
 .alertText{
@@ -449,7 +477,7 @@ body{
     display: inline-block;
     margin-left: 20px;
     color: #f0f;
-    font-size: 14px;
+    font-size: 0.8em;
     font-weight: bold;
 }
 .region{
@@ -476,7 +504,8 @@ body{
 .foot{
     position: relative;
     display: block;
-    width: 960px;
+    width: 100%;
+    max-width: 960px;
     margin: 0 auto;
     text-align: center;
     padding-bottom: 40px;
@@ -516,7 +545,7 @@ body{
     text-align: center;
 }
 .block.complete .text{    
-    font-size: 30px;
+    font-size: 2em;
     font-weight: bold;
     vertical-align: middle;
 }
@@ -536,4 +565,95 @@ body{
 
 #root{
     text-align: center;
+}
+
+@media screen and (max-width: 1500px){
+    .payProcessContent .orderInfo{
+        position: fixed;
+        right: 0px;
+        left: auto;
+        top: 140px;
+    }
+}
+@media screen and (max-width: 960px){
+    /*.payProcessContent .orderInfo{
+        display: none;
+    }*/
+    .payProcessContent .orderInfoButton{
+        display: block;
+    }
+    .payProcessContent .orderInfoContent{
+        transform: translateX(100%);
+        margin: 0px auto;
+    }
+    .payProcessContent .orderInfo.active .orderInfoContent{        
+        transform: translateX(0%);
+    }
+    .payProcessContent .orderInfo.active .orderInfoButton{
+        background-image: url(../img/close.png);
+    }
+    .step .line{
+        width: 20px;
+    }
+    .step .item{        
+        height: 40px;
+    }
+    .step .item .title{
+        width: 60px;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 40px;
+    }  
+    .step .item .title:before{
+        width: 50px;
+        height: 30px;
+        border-radius: 30px;
+        margin-left: -25px;
+        margin-top: -15px;
+    }
+    .step .item .subTitle{
+        font-size: 0.6em;
+    } 
+    .payProcessTitle .step{
+        padding-bottom: 40px;
+    }
+    .payProcessContent{
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-bottom: 60px;
+    }
+    .block{
+        padding-left: 20px;
+        padding-right: 5px;
+        margin: 5px 0px; 
+    }
+    .block.title{        
+        padding-left: 5px;
+        font-size: 1.2em;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        padding-right: 5px;
+    }
+    .block.subTitle{        
+        padding-left: 5px;
+        font-size: 1em;
+        padding-right: 5px;
+    }
+    .block.title .text{
+        display: inline;
+    }
+    .block.subTitle .text{
+        display: inline;
+    }
+    .radioBox{
+        padding: 15px 20px;
+        min-width: 120px;
+        margin-left: 15px;
+    }
+    .inputText{
+        font-size: 0.8em;
+    }
+    .region.error{
+        border: 0;
+    }
 }

@@ -1,6 +1,11 @@
 window.onload = function() {
 	var orderInfo = {
 		template: '#template_orderInfo',
+		data:function(){
+			return {				
+				active:false
+			}
+		},
 		computed: {
 		  	orderInfo:function(){
 		  		return this.$store.state.orderInfo;
@@ -12,6 +17,11 @@ window.onload = function() {
         			return accumulator + currentValue;
         		});
         	}
+		},
+		methods: {
+			orderInfoButton_click:function(){
+				this.active = !this.active;
+			}
 		}
 	};
 	var stepNav = {		

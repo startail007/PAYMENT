@@ -23,22 +23,25 @@
 		</div>
 	</template>
 	<template id="template_orderInfo">
-		<div class="orderInfo">
-			<div class="orderInfoTitle">訂單資訊</div>
-			<div class="item">
-				<div class="title">商品名稱：</div>
-				<div class="value">
-					<div v-for="(item) in orderInfo.list">{{item.name}} x{{item.count}}</div>
+		<div class="orderInfo" :class="{active:active}">
+			<div class="orderInfoContent">
+				<div class="orderInfoTitle">訂單資訊</div>
+				<div class="item">
+					<div class="title">商品名稱：</div>
+					<div class="value">
+						<div v-for="(item) in orderInfo.list">{{item.name}} x{{item.count}}</div>
+					</div>
+				</div>
+				<div class="item">
+					<div class="title">訂單編號：</div>
+					<div class="value">{{orderInfo.order}}</div>
+				</div>
+				<div class="item">
+					<div class="title">訂單金額：</div>
+					<div class="value">NT$ {{totalAmount}}</div>
 				</div>
 			</div>
-			<div class="item">
-				<div class="title">訂單編號：</div>
-				<div class="value">{{orderInfo.order}}</div>
-			</div>
-			<div class="item">
-				<div class="title">訂單金額：</div>
-				<div class="value">NT$ {{totalAmount}}</div>
-			</div>
+			<div class="orderInfoButton" @click="orderInfoButton_click"></div>
 		</div>
 	</template>
 	<template id="template_stepNav">
