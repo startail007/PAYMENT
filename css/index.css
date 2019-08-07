@@ -444,6 +444,14 @@ body{
 	font-size: 14px;
     font-weight: bold;
 }
+.alertText{
+    position: relative;
+    display: inline-block;
+    margin-left: 20px;
+    color: #f0f;
+    font-size: 14px;
+    font-weight: bold;
+}
 .region{
 	position: relative;
 	display: block;

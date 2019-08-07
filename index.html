@@ -123,6 +123,7 @@
 				<div class="block subTitle">
 					<div class="text">請輸入優惠代碼</div>
 					<div class="errorText" v-if="errors.has('promotionCode')">{{ errors.first('promotionCode') }}</div>
+					<div class="alertText" v-if="promotionCode!==''&&!errors.has('promotionCode')">優惠碼有效</div>
 				</div>
 				<div class="block">
 					<input type="text" class="inputText" v-validate="'alpha_num|min:8|promotionCode'" maxlength="8" name="promotionCode" v-model="promotionCode">
