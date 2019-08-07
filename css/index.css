@@ -50,6 +50,8 @@ body{
     margin: 10px auto;
     background-color: #fff;
     pointer-events: auto;
+    transform: translateX(0%);
+    transition: transform .5s;
 }
 .payProcessContent .orderInfo{
     position: absolute;
