@@ -26,6 +26,7 @@ body{
     border-radius: 10px;
     white-space: nowrap;
     max-width: 300px;
+    margin: 10px auto;
 }
 .payProcessContent .orderInfo{
     position: absolute;
@@ -237,6 +238,21 @@ body{
 	display: inline-block;
 }
 
+.block .text{
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+.block .subText {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 2px;
+    position: relative;
+    display: inline-block;
+    color: #555;
+    vertical-align: middle;
+}
 .radioBox:first-child{
     margin-left: 0px;
 }
@@ -335,12 +351,16 @@ body{
     margin-top: -5px;
 }
 .radio .text {
+    position: relative;
+    display: inline-block;
     vertical-align: middle;
     margin-left: 2px;
     position: relative;
     display: inline-block;
 }
 .radio .subText {
+    position: relative;
+    display: inline-block;
     vertical-align: middle;
     margin-left: 2px;
     position: relative;
@@ -431,7 +451,9 @@ body{
     margin: 5px 0px;
 }
 .region.error{
-	background-color: #eee;
+	background-color: #eee;    
+    border: 1px solid #fed52d;
+    border-radius: 10px;
 }
 .payProcessFoot{
     position: fixed;
@@ -464,4 +486,46 @@ body{
     background-color: #ddd;
     line-height: 40px;
     border-radius: 10px;
+}
+
+.card{
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 30px;
+    /*background-color: #ff0;*/
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    vertical-align: middle;
+    margin-left: 10px;
+}
+.card.visa{
+    background-image: url(../img/visa.png);
+}
+
+.block.complete{
+    text-align: center;
+}
+.block.complete .text{    
+    font-size: 30px;
+    font-weight: bold;
+    vertical-align: middle;
+}
+.block.complete .img{  
+    position: relative;
+    display: inline-block;
+    max-width: 100px;
+    vertical-align: middle;
+}
+.block.complete .img img{  
+    width: 100%;
+}
+
+#step3{
+    text-align: center;
+}
+
+#root{
+    text-align: center;
 }

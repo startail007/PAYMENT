@@ -33,6 +33,11 @@ window.onload = function() {
 		template: '#template_root',
 		components: {
 			orderInfo:orderInfo
+		},
+		methods: {
+			pay:function(){
+		       	this.$router.push('/payProcess/step1');	
+			}
 		}
 	};	
 	var payProcess = {
@@ -107,34 +112,36 @@ window.onload = function() {
 				this.$router.push('/');
 			},
 			next:function(){
-				var payTypeContent = this.$refs.payTypeContent;
-				//console.log(payTypeContent)
+				//console.log(this.$validator)
 				var that = this;
-				payTypeContent.$validator.validateAll("main").then(function(result0) {
-		        	that.$validator.validateAll("main").then(function(result1) {
-		        		that.$validator.validate("promotionCode").then(function(result2) {
+				//console.log(payTypeContent)
+				that.$validator.validateAll("main").then(function(result1) {
+		        	that.$validator.validate("promotionCode").then(function(result2) {
+						var payTypeContent = that.$refs.payTypeContent;
+		        		if(payTypeContent){
+			        		payTypeContent.$validator.validateAll("main").then(function(result0) {
+					        	//console.log(result0,result1,result2);
+					        	if(result0&&result1){
+						        	var userInfo = {
+							       		identity:that.identity,
+							       		name:that.name,
+							       		email:that.email,
+							       		promotionCode:(that.promotionCode!==""&&result2)?that.promotionCode:""
+							       	};
+							       	that.$store.commit('setUserInfo', userInfo);		       	
+							       	if(that.$route.params.type==="creditCard"){
+							       		var payInfo = {
+							       			creditCard:payTypeContent.creditCard,
+							       			creditCardTerm:payTypeContent.creditCardTerm,
+							       			creditCardSecurityCode:payTypeContent.creditCardSecurityCode
+							       		}	
+							       		that.$store.commit('setPayInfo', payInfo);	       		
+							       	}
+							       	that.$router.push('/payProcess/step2/' + that.$route.params.type);
+					        	}
 
-				        	//console.log(result0,result1,result2);
-				        	if(result0&&result1){
-					        	var userInfo = {
-						       		identity:that.identity,
-						       		name:that.name,
-						       		email:that.email,
-						       		promotionCode:(that.promotionCode!==""&&result2)?that.promotionCode:""
-						       	};
-						       	that.$store.commit('setUserInfo', userInfo);		       	
-						       	if(that.$route.params.type==="creditCard"){
-						       		var payInfo = {
-						       			creditCard:payTypeContent.creditCard,
-						       			creditCardTerm:payTypeContent.creditCardTerm,
-						       			creditCardSecurityCode:payTypeContent.creditCardSecurityCode
-						       		}	
-						       		that.$store.commit('setPayInfo', payInfo);	       		
-						       	}
-						       	that.$router.push('/payProcess/step2/' + that.$route.params.type);
-				        	}
-
-				       	});			        	
+					       	});	
+				       	}        	
 			       	});
 		       	});	
 		       	
@@ -197,6 +204,11 @@ window.onload = function() {
 		components: {
 			finish:step3_finish,
 			shop:step3_shop
+		},
+		methods: {
+			go:function(){
+		       	this.$router.push('/');	
+			}
 		}
 	};
 
@@ -310,6 +322,9 @@ window.onload = function() {
 					promotionCode:"優惠代碼"
 				},
 				custom: {
+					type: {
+				    	required: '須選擇'
+				    },
 				    agree: {
 				    	required: '須同意'
 				    },
