@@ -24,20 +24,21 @@ body{
 }
 .orderInfoButton{
     position: absolute;
-    display: none;
-    width: 30px;
-    height: 30px;
+    display: block;
+    width: 60px;
+    height: 60px;
+    border-radius: 60px;
     background-color: #fed52d;
     border: 1px solid #888;
     right: 5px;
     top: 5px;
-    border-radius: 30px;
     pointer-events: auto;
     background-image: url(../img/shopping-cart.png);
     background-position: center;
     background-size: 50%;
     background-repeat: no-repeat;
     cursor: pointer;
+    transition: width .3s,height .3s,border-radius .3s,background-image .3s;
 }
 .orderInfoContent{
     position: relative;
@@ -592,6 +593,9 @@ body{
         transform: translateX(0%);
     }
     .payProcessContent .orderInfo.active .orderInfoButton{
+        width: 30px;
+        height: 30px;
+        border-radius: 30px;
         background-image: url(../img/close.png);
     }
     .step .line{
